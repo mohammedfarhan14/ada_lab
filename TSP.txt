@@ -1,0 +1,40 @@
+#include <iostream> #include <limits>
+const int MAX_CITIES = 10;
+int graph[MAX_CITIES][MAX_CITIES]; 
+int numCities;
+int visited[MAX_CITIES] = {0};
+int minCost = std::numeric_limits<int>::max();
+void branchAndBound(int current, int level, int cost) {
+if (level == numCities - 1 && graph[current][0] != 0) 
+{ int totalCost = cost + graph[current][0];
+if (totalCost < minCost) { minCost = totalCost;
+}
+return;
+}
+visited[current] = 1;
+for (int i = 0; i < numCities; i++) {
+if (!visited[i] && graph[current][i] != 0 && cost + graph[current][i] < minCost)
+{
+branchAndBound(i, level + 1, cost + graph[current][i]);
+}
+}
+visited[current] = 0;
+}
+int main() 
+{
+cout << "Enter the number of cities (1-" << MAX_CITIES << "): "; cin >> numCities;
+ 
+if (numCities > MAX_CITIES || numCities < 1)
+ { cout << "Invalid number of cities." << std::endl; return 1;
+}
+cout << "Enter the distance matrix for the graph:" <<endl; 
+for (int i = 0; i < numCities; i++)
+ {
+for (int j = 0; j < numCities; j++)
+ { cin >> graph[i][j];
+}
+}
+branchAndBound(0, 0, 0);
+cout << "Minimum cost of TSP: " << minCost <<endl;
+ return 0;
+}
